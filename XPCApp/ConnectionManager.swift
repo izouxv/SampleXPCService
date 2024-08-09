@@ -83,11 +83,16 @@ class ConnectionManager: NSObject, ObservableObject, ClientProtocol
 
     // MARK: ClientProtocol
 
-    func incrementCount()
-      {
-        // Because this method is updating a Published variable, but will be called on a background thread,
-        // We need to ensure that the logic to modify the count is run on the main thread
-        DispatchQueue.main.async { self.count += 1 }
-      }
+//    func incrementCount(_ num: Int) {
+//        // Because this method is updating a Published variable, but will be called on a background thread,
+//        // We need to ensure that the logic to modify the count is run on the main thread
+//        DispatchQueue.main.async { self.count = num }
+//      }
+    
+    func incrementCount(_ num: Int, reply: @escaping (Int) -> Void) {
+        DispatchQueue.main.async { self.count = num }
+        reply(num)
+        
+    }
 
   }

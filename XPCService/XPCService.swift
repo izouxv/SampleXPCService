@@ -10,6 +10,8 @@ import Foundation
 class XPCService : NSObject, NSXPCListenerDelegate, XPCServiceProtocol
   {
 
+    var count : Int = 0
+    
     // An optional timer source whose event handler will use the XPC connection to communicate with the client application
     var timerSource : DispatchSourceTimer?
 
@@ -76,7 +78,10 @@ class XPCService : NSObject, NSXPCListenerDelegate, XPCServiceProtocol
 
 
     // MARK: XPCServiceProtocol
-
+    func rpc(_ num: Int, reply: @escaping(Int)->Void) -> Void{
+        self.count += num
+        reply( self.count) 
+    }
     func startTimer()
       {
         // Ensure that the timer source hasn't been created yet
@@ -86,11 +91,15 @@ class XPCService : NSObject, NSXPCListenerDelegate, XPCServiceProtocol
         timerSource = DispatchSource.makeTimerSource(flags: [], queue: DispatchQueue.main)
 
         // Schedule the timer source to fire every 2 seconds
-        timerSource!.schedule(deadline: DispatchTime.now(), repeating: .seconds(2))
+        timerSource!.schedule(deadline: DispatchTime.now(), repeating: .seconds(1))
 
+        
         // Set the event handler of the timer source to message to client app to increment it's count
         timerSource!.setEventHandler(handler: DispatchWorkItem(block: {
-          self.clientApp.incrementCount()
+            self.count += 1
+            self.clientApp.incrementCount(self.count) { ret in
+                NSLog("client back ret: %d", ret)
+            }
         }))
 
         // Dispatch sources are created in a suspended state, and must be resumed before they begin processing events

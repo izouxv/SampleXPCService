@@ -15,24 +15,16 @@ import Foundation
 
 
 // Declare the XPC Service's label in file included in both the main app and XPC service
-let xpcServiceLabel = "com.example.XPCService"
-
+let xpcServiceLabel = "com.example.XPC.Service"
 
 // A protocol declaring the exposed methods of the XPC service
-@objc protocol XPCServiceProtocol
-  {
-
+@objc protocol XPCServiceProtocol{
     func startTimer() -> Void
-
     func cancelTimer() -> Void
-
-  }
-
+    func rpc(_ num: Int, reply: @escaping(Int)->Void) -> Void
+}
 
 // A protocol declaring the exposed methods of the client application
-@objc protocol ClientProtocol
-  {
-
-    func incrementCount() -> Void
-
-  }
+@objc protocol ClientProtocol{
+    func incrementCount(_ num: Int, reply: @escaping(Int)->Void) -> Void
+}

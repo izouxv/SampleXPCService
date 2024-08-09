@@ -15,7 +15,8 @@ struct ContentView: View {
 
   var body: some View {
     Text(String(connectionManager.count)).padding()
-    Button("Start Timer", action: startTimer).padding()
+      Button("Start Timer", action: startTimer).padding()
+      Button("Add 100", action: add100).padding()
     Button("Cancel Timer", action: cancelTimer).padding()
     Button("Invalidate Connection", action: invalidateConnection).padding()
   }
@@ -25,6 +26,13 @@ struct ContentView: View {
     {
       // Message the XPC Service to begin the timer
       connectionManager.xpcService().startTimer()
+    }
+
+    func add100() -> Void
+    {
+        connectionManager.xpcService().rpc(100) { ret in
+            NSLog("xpc server ret: %d", ret)
+        }
     }
 
 
